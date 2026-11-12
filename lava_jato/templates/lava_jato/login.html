@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrar | LavaControl</title>
+    <link rel="stylesheet" href="{% static 'lava_jato/css/global.css' %}">
+</head>
+<body class="login-body">
+    <main class="login-page">
+        <div class="login-brand">
+            <span class="brand-icon">◉</span>
+            <strong>LavaFácil</strong>
+        </div>
+
+        <section class="login-box">
+            <h1>Bem-vindo de volta</h1>
+            <p>Entre com seus dados para acessar o painel.</p>
+
+            <form id="login-form" class="form-stack" method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                {% if error_message %}
+                    <div class="error-message">{{ error_message }}</div>
+                {% endif %}
+                <label>Usuário
+                    <div class="input-wrap"><span>♙</span><input type="text" name='username' placeholder="Digite seu usuário"></div>
+                </label>
+                <label>Senha
+                    <div class="input-wrap">
+                        <span>♧</span><input id="password" type="password" name='password' placeholder="Digite sua senha">
+                        <button type="button" class="password-toggle" aria-label="Mostrar senha">◉</button>
+                    </div>
+                </label>
+                <button class="primary-button" type="submit">Entrar</button>
+            </form>
+            <small>Acesso seguro e restrito à equipe autorizada.</small>
+        </section>
+    </main>
+    <script src="{% static 'lava_jato/js/global.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+{% extends 'lava_jato/base.html' %}
+{% block title %}Registrar lavagem | LavaControl{% endblock %}
+{% block nav_lavagem %}active{% endblock %}
+{% block content %}
+<section class="page-heading">
+    <span class="eyebrow">NOVO SERVIÇO</span>
+    <h1>Registrar lavagem</h1>
+    <p>Preencha os dados do serviço realizado.</p>
+</section>
+
+<form id="wash-form" class="panel form-stack" method = 'post'>
+    {% csrf_token %}
+    <label>Data da lavagem
+        <input type="date" value="{% now 'Y-m-d' %}" name = 'data_hora'>
+        <small>Preenchida automaticamente com a data de hoje.</small>
+    </label>
+    <label>Tipo de veículo
+        <select name = 'veiculo' required>
+            <option value ='' selected disabled>Selecione uma categoria</option>
+            <option>Moto</option><option>Carro</option><option>Caminhão</option><option>Trator</option>
+        </select>
+    </label>
+    <label>Valor da lavagem
+        <div class="money-input">
+            <span>R$</span>
+            <input type="text" name = 'valor' placeholder="0,00" required>
+        </div>
+    </label>
+    <hr>
+    <button class="primary-button" type="submit">✓ &nbsp; Salvar lavagem</button>
+    <button class="secondary-button" type="button" data-cancel>Cancelar</button>
+</form>
+{% endblock %}

@@ -1,0 +1,124 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="manifest" href="/static/lava_jato/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#16a36f">
+    <title>{% block title %}LavaFacil{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'lava_jato/css/global.css' %}">
+</head>
+<body>
+    
+    <div class="app-shell">
+        {% block header %}
+        <header class="topbar">
+            <a href='#' class="brand">
+                <span class="brand-icon">◉</span>
+                <span>LavaFácil</span>  
+            </a>
+            <div class="topbar-actions">
+                <span class="user-badge">{{user.username|slice:':2'|upper}}</span>
+
+                <form method='POST'
+                    action="{% url 'logout' %}"
+                    style="display: inline;">
+
+                    {% csrf_token %}
+                    <button class="icon-button" type="submit" title="Sair">↪</button>
+
+                </form>
+                
+            </div>
+        </header>
+        {% endblock %}
+ 
+
+        <main class="page-content">
+            {% if messages %}
+                <div class="toast-container" id="toast-container">
+                    {% for message in messages %}
+                        <div class="toast toast-{{ message.tags }}" role="alert">
+
+                            <div class="toast-icon">
+                                {% if 'success' in message.tags %}
+                                    ✓
+                                {% elif 'info' in message.tags %}
+                                    i
+                                {% elif 'error' in message.tags %}
+                                    !
+                                {% elif 'warning' in message.tags %}
+                                    !
+                                {% endif %}
+                            </div>
+
+                            <div class="toast-content">
+                                <strong>
+                                    {% if 'success' in message.tags %}
+                                        Sucesso!
+                                    {% elif 'info' in message.tags %}
+                                        Informação
+                                    {% elif 'error' in message.tags %}
+                                        Erro!
+                                    {% elif 'warning' in message.tags %}
+                                        Atenção!
+                                    {% endif %}
+                                </strong>
+
+                                <span>{{ message }}</span>
+                            </div>
+
+                            <button
+                                type="button"
+                                class="toast-close"
+                                aria-label="Fechar notificação"
+                                onclick="this.closest('.toast').remove()"
+                            >
+                                &times;
+                            </button>
+
+                            <div class="toast-progress"></div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block content %}
+            {% endblock %}
+        </main>
+
+        {% block navigation %}
+        <nav class="bottom-nav">
+            <a href={% url 'dashboard' %} class="nav-item {% block nav_dashboard %}{% endblock %}">
+                <span class="nav-icon">⌂</span><span>Visão geral</span>
+            </a>
+            <a href= {% url 'registrar_lavagem' %} class="nav-item {% block nav_lavagem %}{% endblock %}">
+                <span class="nav-icon">＋</span><span>Lavagem</span>
+            </a>
+            <a href= {% url 'historico' %} class="nav-item {% block nav_historico %}{% endblock %}">
+                <span class="nav-icon">↶</span><span>Histórico</span>
+            </a>
+        </nav>
+        {% endblock %}
+    </div>
+
+    <script src="{% static 'lava_jato/js/global.js' %}"></script>
+
+    <script>
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("/static/lava_jato/service-worker.js")
+                    .then((registration) => {
+                        console.log("Service Worker registrado:", registration.scope);
+                    })
+                    .catch((error) => {
+                        console.error("Erro ao registrar Service Worker:", error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

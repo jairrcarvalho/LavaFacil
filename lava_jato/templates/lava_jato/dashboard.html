@@ -1,0 +1,84 @@
+{% extends 'lava_jato/base.html' %}
+{% load static %}
+{% block title %}Visão geral | LavaControl{% endblock %}
+{% block nav_dashboard %}active{% endblock %}
+{% block content %}
+<section class="page-heading">
+    <span class="eyebrow">PAINEL DE CONTROLE</span>
+    <h1>Visão geral</h1>
+    <p>Olá, {{ user.username }}. Veja o desempenho do seu negócio.</p>
+</section>
+
+<a href="{% url 'registrar_lavagem' %}" class="primary-button register-link">＋ &nbsp; Registrar lavagem</a>
+
+<section class="metrics">
+    <article class="metric-card metric-primary">
+        <div>
+            <span>Faturamento do mês</span>
+            <strong>R$ {{ valor_mes |floatformat:2 }}</strong>
+        </div>
+        <span class="metric-symbol">
+             <img src="{% static 'lava_jato/icons/circle-dollar-sign.png' %}" alt="circle-dollar-sign">
+        </span>
+    </article>
+
+    <article class="metric-card">
+        <div>
+            <span>Faturamento da semana</span>
+            <strong>R$ {{  valor_semana |floatformat:2 }}</strong>
+        </div>
+        <span class="metric-symbol light">
+            <img src="{% static 'lava_jato/icons/circle-dollar-sign.png' %}" alt="circle-dollar-sign">
+        </span>
+    </article>
+
+    <article class="metric-card">
+        <div>
+            <span>Lavagens no mês</span>
+            <strong>{{ total_lavagens }}</strong>
+        </div>
+        <span class="metric-symbol light">
+            <img src="{% static 'lava_jato/icons/metric.png' %}" alt="metric">
+        </span>
+    </article>
+</section>
+
+<section class="category-section">
+    <h2>Resumo por categoria</h2>
+    <p>Quantidade e faturamento no mês atual.</p>
+    <div class="category-grid">
+        <article class="category-card">
+            <span class="category-icon green">
+                <img src="{% static 'lava_jato/icons/motorbike.png' %}" alt="motorbike">
+            </span>
+                <b>Moto</b>
+                <strong>{{resumo_moto.valor}}</strong>
+                <small>{{resumo_moto.quantidade}} lavagens</small>
+        </article>
+      <article class="category-card">
+            <span class="category-icon green">
+                <img src="{% static 'lava_jato/icons/car.png' %}" alt="Car">
+            </span>
+            <b>Carro</b>
+            <strong>{{resumo_carro.valor}}</strong>
+            <small>{{resumo_carro.quantidade}} lavagens</small>  
+        </article>
+        <article class="category-card">
+            <span class="category-icon green">
+                <img src="{% static 'lava_jato/icons/truck.png' %}" alt="truck">
+            </span>
+            <b>Caminhão</b>
+            <strong>{{resumo_caminhao.valor}}</strong>
+            <small>{{resumo_caminhao.quantidade}} lavagens</small>
+        </article>
+        <article class="category-card">
+            <span class="category-icon green">
+                <img src="{% static 'lava_jato/icons/tractor.png' %}" alt="tractor">
+            </span>
+            <b>Trator</b>
+            <strong>{{resumo_trator.valor}}</strong>
+            <small>{{resumo_trator.quantidade}} lavagens</small>
+        </article>
+    </div>
+</section>
+{% endblock %}

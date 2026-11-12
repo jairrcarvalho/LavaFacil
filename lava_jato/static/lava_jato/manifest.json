@@ -1,0 +1,23 @@
+{
+    "name": "LavaFácil",
+    "short_name": "LavaFácil",
+    "description": "Sistema de gerenciamento de lavagens",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#087c54",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "/static/lava_jato/icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/lava_jato/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

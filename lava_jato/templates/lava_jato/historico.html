@@ -1,0 +1,115 @@
+{% extends 'lava_jato/base.html' %}
+{% block title %}Histórico | LavaControl{% endblock %}
+{% block nav_historico %}active{% endblock %}
+{% block content %}
+<section class="page-heading">
+    <span class="eyebrow">SEUS REGISTROS</span>
+    <h1>Histórico de lavagens</h1>
+    <p>Edite ou exclua os serviços realizados.</p>
+</section>
+
+<section class="history-table-wrap">
+    <table class="history-table">
+        <thead><tr><th>Data</th><th>Veículo</th><th>Valor</th><th></th></tr></thead>
+        <tbody>
+            {% for lavagem in lavagens %}
+                <tr>
+                    <td> {{lavagem.data_hora |date:"d/m/Y"}} </td>
+                    <td> {{lavagem.veiculo}}</td>
+                    <td>R$ {{lavagem.valor |floatformat:2}}</td>
+                    <td>
+                        <button  class="table-action edit" 
+                        onclick="location.href='{% url 'editar_lavagem' lavagem.id %}'">
+                            ✎
+                        </button>
+                            <form method="POST"
+                                action="{% url 'excluir_lavagem' lavagem.id %}"
+                                style="display: inline;">
+
+                                {% csrf_token %}
+
+                                <button class="table-action delete"
+                                        type="button"
+                                        onclick="abrirModalExclusao(this)"
+                                        title="Excluir lavagem">
+                                    🗑
+                                </button>
+
+                            </form>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="4">Nenhum registro encontrado.</td></tr>
+            {% endfor %}    
+        </tbody>
+    </table>
+    <div class="pagination">
+
+        {% if lavagens.has_previous %}
+            <a href="?page={{ lavagens.previous_page_number }}">
+                &laquo;
+            </a>
+        {% endif %}
+
+        {% for numero in lavagens.paginator.page_range %}
+            {% if numero >= lavagens.number|add:"-2" and numero <= lavagens.number|add:"2" %}
+
+                {% if numero == lavagens.number %}
+                    <span class="current-page">{{ numero }}</span>
+                {% else %}
+                    <a href="?page={{ numero }}">{{ numero }}</a>
+                {% endif %}
+
+            {% endif %}
+        {% endfor %}
+
+        {% if lavagens.has_next %}
+            <a href="?page={{ lavagens.next_page_number }}">
+                &raquo;
+            </a>
+        {% endif %}
+
+    </div>
+</section>
+
+
+
+<!-- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO -->
+
+<div class="modal-overlay" id="modal-exclusao">
+
+    <div class="modal-exclusao">
+
+        <div class="modal-icon">
+            🗑
+        </div>
+
+        <h3>Excluir lavagem?</h3>
+
+        <p>
+            Tem certeza de que deseja excluir este registro?
+            Essa ação não poderá ser desfeita.
+        </p>
+
+        <div class="modal-actions">
+
+            <button type="button"
+                    class="btn-cancelar"
+                    onclick="fecharModalExclusao()">
+                Cancelar
+            </button>
+
+            <button type="button"
+                    class="btn-confirmar-exclusao"
+                    onclick="confirmarExclusao()">
+                Sim, excluir
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+

@@ -1,0 +1,29 @@
+{% extends 'lava_jato/base.html' %}
+{% block title %}Editar lavagem | LavaControl{% endblock %}
+{% block nav_lavagem %}active{% endblock %}
+{% block content %}
+<section class="page-heading">
+    <span class="eyebrow">EDITAR SERVIÇO</span>
+    <h1>Editar lavagem</h1>
+</section>
+
+<form id="wash-form" class="panel form-stack" method = 'post'>
+    {% csrf_token %}
+    <label>Data da lavagem
+        <input type="date" value="{{ lavagem.data_hora | date:'Y-m-d' }}" name = 'data_hora'>
+        <small>Preenchida automaticamente com a data de hoje.</small>
+    </label>
+    <label>Tipo de veículo
+        <select name = 'veiculo'>
+            <option>{{ lavagem.veiculo }}</option>
+            <option>Moto</option><option>Carro</option><option>Caminhão</option><option>Trator</option>
+        </select>
+    </label>
+    <label>Valor da lavagem
+        <div class="money-input"><span>R$</span><input type="text" name = 'valor' value="{{ lavagem.valor | floatformat:2 }}"></div>
+    </label>
+    <hr>
+    <button class="primary-button" type="submit">✓ &nbsp; Salvar lavagem</button>
+    <button class="secondary-button" type="button" data-cancel>Cancelar</button>
+</form>
+{% endblock %}
