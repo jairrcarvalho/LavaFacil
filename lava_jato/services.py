@@ -5,7 +5,6 @@ from django.utils import timezone
 
 
 def resumo_por_veiculo(lavagens, veiculo):
-    hoje = timezone.localdate()
     
     lavagens_filtradas = lavagens.filter(
         veiculo__icontains = veiculo,
