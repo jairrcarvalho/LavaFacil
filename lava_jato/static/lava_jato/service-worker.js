@@ -1,18 +1,12 @@
 
-const CACHE_NAME = "lavafacil-v1";
+const CACHE_NAME = "lavafacil-v2";
 
-// Instala o Service Worker
+// Instalação
 self.addEventListener("install", (event) => {
-    event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll([]);
-        })
-    );
-
     self.skipWaiting();
 });
 
-// Ativa e limpa caches antigos
+// Ativação e limpeza dos caches antigos
 self.addEventListener("activate", (event) => {
     event.waitUntil(
         caches.keys().then((cacheNames) => {
@@ -27,7 +21,7 @@ self.addEventListener("activate", (event) => {
     self.clients.claim();
 });
 
-// Armazena arquivos estáticos em cache
+// Arquivos estáticos
 self.addEventListener("fetch", (event) => {
     const request = event.request;
     const url = new URL(request.url);
@@ -41,12 +35,8 @@ self.addEventListener("fetch", (event) => {
     }
 
     event.respondWith(
-        caches.match(request).then((cachedResponse) => {
-            if (cachedResponse) {
-                return cachedResponse;
-            }
-
-            return fetch(request).then((response) => {
+        fetch(request)
+            .then((response) => {
                 if (response.ok) {
                     const responseCopy = response.clone();
 
@@ -56,7 +46,11 @@ self.addEventListener("fetch", (event) => {
                 }
 
                 return response;
-            });
-        })
+            })
+            .catch(async () => {
+                return await caches.match(request, {
+                    ignoreSearch: true
+                }) || Response.error();
+            })
     );
 });
