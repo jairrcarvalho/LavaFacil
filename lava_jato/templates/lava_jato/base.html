@@ -107,7 +107,7 @@
 
     <script src="{% static 'lava_jato/js/global.js' %}"></script>
 
-    <script>
+    {% comment %} <script>
         if ("serviceWorker" in navigator) {
             window.addEventListener("load", () => {
                 navigator.serviceWorker.register("/static/lava_jato/service-worker.js")
@@ -119,6 +119,6 @@
                     });
             });
         }
-    </script>
+    </script> {% endcomment %}
 </body>
 </html>
