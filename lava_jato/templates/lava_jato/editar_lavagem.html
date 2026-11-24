@@ -20,7 +20,15 @@
         </select>
     </label>
     <label>Valor da lavagem
-        <div class="money-input"><span>R$</span><input type="text" name = 'valor' value="{{ lavagem.valor | floatformat:2 }}"></div>
+        <div class="money-input"><span>R$</span>
+            <input 
+            type="text" 
+            inputmode='decimal' 
+            name = 'valor' 
+            value="{{ lavagem.valor | floatformat:2 }}"
+            oninput="this.value = this.value.replace(/[^0-9,.]/g, '')"
+            >
+        </div>
     </label>
     <hr>
     <button class="primary-button" type="submit">✓ &nbsp; Salvar lavagem</button>

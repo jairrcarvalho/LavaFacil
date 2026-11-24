@@ -11,11 +11,43 @@
 
 <a href="{% url 'registrar_lavagem' %}" class="primary-button register-link">＋ &nbsp; Registrar lavagem</a>
 
+
+<form method="GET" class="period-filter">
+    <div>
+        <label for="periodo">Filtrar período</label>
+        <select name="periodo" id="periodo" onchange="this.form.submit()">
+            <option value="hoje" {% if periodo == 'hoje' %}selected{% endif %}>Hoje</option>
+            <option value="7dias" {% if periodo == '7dias' %}selected{% endif %}>Últimos 7 dias</option>
+            <option value="mes" {% if periodo == 'mes' %}selected{% endif %}>Este mês</option>
+            <option value="anterior" {% if periodo == 'anterior' %}selected{% endif %}>Mês anterior</option>
+            <option value="30dias" {% if periodo == '30dias' %}selected{% endif %}>Últimos 30 dias</option>
+            <option value="personalizado" {% if periodo == 'personalizado' %}selected{% endif %}>Personalizado</option>
+        </select>
+    </div>
+
+    {% if periodo == 'personalizado' %}
+        <div>
+            <label for="data_inicio">Data inicial</label>
+            <input type="date" name="data_inicio" id="data_inicio"
+                   value="{{ data_inicio|date:'Y-m-d' }}" required>
+        </div>
+
+        <div>
+            <label for="data_fim">Data final</label>
+            <input type="date" name="data_fim" id="data_fim"
+                   value="{{ data_fim|date:'Y-m-d' }}" required>
+        </div>
+
+        <button type="submit">Aplicar</button>
+    {% endif %}
+</form>
+
+
 <section class="metrics">
     <article class="metric-card metric-primary">
         <div>
-            <span>Faturamento do mês</span>
-            <strong>R$ {{ valor_mes |floatformat:2 }}</strong>
+            <span>Faturamento do período</span>
+            <strong>R$ {{ faturamento|floatformat:2 }}</strong>
         </div>
         <span class="metric-symbol">
              <img src="{% static 'lava_jato/icons/circle-dollar-sign.png' %}" alt="circle-dollar-sign">
@@ -24,28 +56,18 @@
 
     <article class="metric-card">
         <div>
-            <span>Faturamento da semana</span>
-            <strong>R$ {{  valor_semana |floatformat:2 }}</strong>
-        </div>
-        <span class="metric-symbol light">
-            <img src="{% static 'lava_jato/icons/circle-dollar-sign.png' %}" alt="circle-dollar-sign">
-        </span>
-    </article>
-
-    <article class="metric-card">
-        <div>
-            <span>Lavagens no mês</span>
+            <span>Lavagens no período</span>
             <strong>{{ total_lavagens }}</strong>
         </div>
         <span class="metric-symbol light">
-            <img src="{% static 'lava_jato/icons/metric.png' %}" alt="metric">
+            <img src="{% static 'lava_jato/icons/circle-dollar-sign.png' %}" alt="circle-dollar-sign">
         </span>
     </article>
 </section>
 
 <section class="category-section">
     <h2>Resumo por categoria</h2>
-    <p>Quantidade e faturamento no mês atual.</p>
+    <p>Quantidade e faturamento no período selecionado.</p>.
     <div class="category-grid">
         <article class="category-card">
             <span class="category-icon green">
