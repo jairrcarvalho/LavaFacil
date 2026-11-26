@@ -477,6 +477,61 @@ hr { width:100%; border:0; border-top:1px solid #e2e9f0; margin:7px 0 2px; }
     background: #e2e8f0;
 }
 
+
+.filter-section {
+    margin-bottom: 24px;
+}
+
+.filter-form {
+    display: flex;
+    align-items: end;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.filter-group label {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.filter-group select,
+.filter-group input {
+    min-height: 42px;
+    padding: 0 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--card-background);
+    color: var(--text-color);
+}
+
+.filter-error {
+    color: #dc2626;
+    font-size: 13px;
+    margin-top: 8px;
+}
+
+@media (max-width: 600px) {
+    .filter-form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .filter-group:first-child {
+        grid-column: 1 / -1;
+    }
+
+    .filter-form button {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+}
+
 @keyframes modalEntrada {
     from {
         opacity: 0;

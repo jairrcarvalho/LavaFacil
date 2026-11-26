@@ -2,6 +2,9 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.utils import timezone
+from datetime import datetime, timedelta, time
+from decimal import Decimal
+from django.db.models import Sum
 from django.contrib import messages
 from .services import resumo_por_veiculo
 from .models import Lavagem
@@ -83,41 +86,114 @@ def excluir_lavagem(request, lavagem_id):
     return redirect('historico')
 
 @login_required
+
+@login_required
 def dashboard(request):
-    lavagens = Lavagem.objects.all().order_by('-data_hora')
+    hoje = timezone.localdate()
+
+    periodo = request.GET.get('periodo', 'mes')
+    data_inicio = None
+    data_fim = None
+    erro_filtro = None
+
+    # Definição dos períodos
+    if periodo == 'semana':
+        data_inicio = hoje - timedelta(days=hoje.weekday())
+        data_fim = hoje
+        nome_periodo = 'Semana atual'
+
+    elif periodo == 'mes':
+        data_inicio = hoje.replace(day=1)
+        data_fim = hoje
+        nome_periodo = 'Mês atual'
+
+    elif periodo == '30dias':
+        data_inicio = hoje - timedelta(days=29)
+        data_fim = hoje
+        nome_periodo = 'Últimos 30 dias'
+
+    elif periodo == 'personalizado':
+        try:
+            data_inicio = datetime.strptime(
+                request.GET.get('data_inicio', ''), '%Y-%m-%d'
+            ).date()
+
+            data_fim = datetime.strptime(
+                request.GET.get('data_fim', ''), '%Y-%m-%d'
+            ).date()
+
+            if data_inicio > data_fim or data_fim > hoje:
+                raise ValueError
+
+            nome_periodo = 'Período personalizado'
+
+        except ValueError:
+            periodo = 'mes'
+            data_inicio = hoje.replace(day=1)
+            data_fim = hoje
+            nome_periodo = 'Mês atual'
+            erro_filtro = 'Informe um período válido.'
+
+    else:
+        periodo = 'mes'
+        data_inicio = hoje.replace(day=1)
+        data_fim = hoje
+        nome_periodo = 'Mês atual'
+
+    # Conversão para datetime com fuso horário
+    inicio = timezone.make_aware(
+        datetime.combine(data_inicio, time.min)
+    )
+
+    fim = timezone.make_aware(
+        datetime.combine(data_fim + timedelta(days=1), time.min)
+    )
+
+    # Consulta das lavagens do período
+    lavagens = Lavagem.objects.filter(
+        data_hora__gte=inicio,
+        data_hora__lt=fim
+    ).order_by('-data_hora')
+
+    # Indicadores
     total_lavagens = lavagens.count()
-    valor_semana = sum(
-        lavagem.valor for lavagem in lavagens.filter(
-            data_hora__week = timezone.now().isocalendar().week,
-            data_hora__year = timezone.now().year
-        )
+
+    valor_periodo = lavagens.aggregate(
+        total=Sum('valor')
+    )['total'] or Decimal('0.00')
+
+    ticket_medio = (
+        valor_periodo / total_lavagens
+        if total_lavagens > 0
+        else Decimal('0.00')
     )
-    valor_mes = sum(
-        lavagem.valor for lavagem in lavagens.filter(
-            data_hora__month= timezone.now().month,
-            data_hora__year= timezone.now().year
-        )
-    )
-    
-#Resumos por categoria de veiculo
+
+    # Resumos por categoria
     resumo_moto = resumo_por_veiculo(lavagens, 'moto')
     resumo_carro = resumo_por_veiculo(lavagens, 'carro')
     resumo_caminhao = resumo_por_veiculo(lavagens, 'caminhão')
     resumo_trator = resumo_por_veiculo(lavagens, 'trator')
-    
-  
+
     context = {
         'lavagens': lavagens,
         'total_lavagens': total_lavagens,
-        'valor_semana': valor_semana,
-        'valor_mes': valor_mes,
+        'valor_periodo': valor_periodo,
+        'ticket_medio': ticket_medio,
+
         'resumo_moto': resumo_moto,
         'resumo_carro': resumo_carro,
         'resumo_caminhao': resumo_caminhao,
         'resumo_trator': resumo_trator,
+
+        'periodo': periodo,
+        'nome_periodo': nome_periodo,
+        'data_inicio': data_inicio.strftime('%Y-%m-%d'),
+        'data_fim': data_fim.strftime('%Y-%m-%d'),
+        'erro_filtro': erro_filtro,
     }
-    
+
     return render(request, 'lava_jato/dashboard.html', context)
+
 
 @login_required
 def historico(request):

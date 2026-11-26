@@ -10,42 +10,110 @@
 </section>
 
 <a href="{% url 'registrar_lavagem' %}" class="primary-button register-link">＋ &nbsp; Registrar lavagem</a>
+<section class="filter-section">
+    <form method="GET" class="filter-form">
+
+        <div class="filter-group">
+            <label for="periodo">Período de análise</label>
+
+            <select name="periodo" id="periodo">
+                <option value="semana"
+                    {% if periodo == 'semana' %}selected{% endif %}>
+                    Semana atual
+                </option>
+
+                <option value="mes"
+                    {% if periodo == 'mes' %}selected{% endif %}>
+                    Mês atual
+                </option>
+
+                <option value="30dias"
+                    {% if periodo == '30dias' %}selected{% endif %}>
+                    Últimos 30 dias
+                </option>
+
+                <option value="personalizado"
+                    {% if periodo == 'personalizado' %}selected{% endif %}>
+                    Personalizado
+                </option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="data_inicio">Data inicial</label>
+            <input
+                type="date"
+                name="data_inicio"
+                id="data_inicio"
+                value="{{ data_inicio }}"
+            >
+        </div>
+
+        <div class="filter-group">
+            <label for="data_fim">Data final</label>
+            <input
+                type="date"
+                name="data_fim"
+                id="data_fim"
+                value="{{ data_fim }}"
+            >
+        </div>
+
+        <button type="submit" class="primary-button">
+            Aplicar filtro
+        </button>
+
+    </form>
+
+    {% if erro_filtro %}
+        <p class="filter-error">{{ erro_filtro }}</p>
+    {% endif %}
+</section>
+
 
 <section class="metrics">
+
     <article class="metric-card metric-primary">
         <div>
-            <span>Faturamento do mês</span>
-            <strong>R$ {{ valor_mes |floatformat:2 }}</strong>
+            <span>Faturamento do período</span>
+            <strong>R$ {{ valor_periodo|floatformat:2 }}</strong>
         </div>
+
         <span class="metric-symbol">
-             <img src="{% static 'lava_jato/icons/circle-dollar-sign.png' %}" alt="circle-dollar-sign">
+            <img src="{% static 'lava_jato/icons/circle-dollar-sign.png' %}"
+                 alt="Faturamento">
         </span>
     </article>
 
     <article class="metric-card">
         <div>
-            <span>Faturamento da semana</span>
-            <strong>R$ {{  valor_semana |floatformat:2 }}</strong>
-        </div>
-        <span class="metric-symbol light">
-            <img src="{% static 'lava_jato/icons/circle-dollar-sign.png' %}" alt="circle-dollar-sign">
-        </span>
-    </article>
-
-    <article class="metric-card">
-        <div>
-            <span>Lavagens no mês</span>
+            <span>Lavagens no período</span>
             <strong>{{ total_lavagens }}</strong>
         </div>
+
         <span class="metric-symbol light">
-            <img src="{% static 'lava_jato/icons/metric.png' %}" alt="metric">
+            <img src="{% static 'lava_jato/icons/metric.png' %}"
+                 alt="Lavagens">
         </span>
     </article>
+
+    <article class="metric-card">
+        <div>
+            <span>Ticket médio</span>
+            <strong>R$ {{ ticket_medio|floatformat:2 }}</strong>
+        </div>
+
+        <span class="metric-symbol light">
+            <img src="{% static 'lava_jato/icons/circle-dollar-sign.png' %}"
+                 alt="Ticket médio">
+        </span>
+    </article>
+
 </section>
 
 <section class="category-section">
     <h2>Resumo por categoria</h2>
-    <p>Quantidade e faturamento no mês atual.</p>
+    <p>Quantidade e faturamento: {{ nome_periodo|lower }}.</p>
     <div class="category-grid">
         <article class="category-card">
             <span class="category-icon green">
