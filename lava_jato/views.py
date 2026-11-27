@@ -50,7 +50,10 @@ def registrar_lavagem(request):
         veiculo = request.POST.get('veiculo')
         valor = request.POST.get('valor')
     
-        Lavagem.objects.create(veiculo=veiculo, valor=valor)
+        Lavagem.objects.create(
+            usuario=request.user,
+            veiculo=veiculo, 
+            valor=valor) 
         messages.success(request, 'Lavagem registrada com sucesso!')
         return redirect("dashboard")
         
@@ -59,7 +62,7 @@ def registrar_lavagem(request):
 
 @login_required
 def editar_lavagem(request, lavagem_id):
-    lavagem = get_object_or_404(Lavagem, id=lavagem_id)
+    lavagem = get_object_or_404(Lavagem, id=lavagem_id, usuario=request.user)
     
     
     if request.method == 'POST':
@@ -75,7 +78,7 @@ def editar_lavagem(request, lavagem_id):
 @login_required
 def excluir_lavagem(request, lavagem_id):
     
-    lavagem = get_object_or_404(Lavagem, id=lavagem_id)
+    lavagem = get_object_or_404(Lavagem, id=lavagem_id, usuario=request.user)
     
     if request.method == 'POST':
         
@@ -151,6 +154,7 @@ def dashboard(request):
 
     # Consulta das lavagens do período
     lavagens = Lavagem.objects.filter(
+        usuario=request.user,
         data_hora__gte=inicio,
         data_hora__lt=fim
     ).order_by('-data_hora')
@@ -197,7 +201,8 @@ def dashboard(request):
 
 @login_required
 def historico(request):
-    lavagens = Lavagem.objects.all().order_by('-data_hora')
+    lavagens = Lavagem.objects.filter(
+        usuario=request.user).order_by('-data_hora')
     
     paginador = Paginator(lavagens, 15)
     pagina = request.GET.get('page')
